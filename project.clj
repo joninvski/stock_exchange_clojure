@@ -3,7 +3,7 @@
   :url "http://github.com/joninvski/stock_exchange_clojure"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies [[org.clojure/clojure "1.7.0"]
+  :dependencies [[org.clojure/clojure "1.8.0"]
                  [cljfmt "0.5.1"]
                  ]
 
