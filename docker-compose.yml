@@ -30,6 +30,14 @@ services:
       - "0.0.0.0:40001:40001"
     command: lein repl
 
+  lint:
+    build:
+      dockerfile: Dockerfile.client
+      context: .
+    volumes:
+      - .:/usr/src/app
+    command: lein eastwood
+
 networks:
   back:
     driver: bridge

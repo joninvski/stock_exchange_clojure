@@ -1,4 +1,4 @@
-(defproject my-stuff "0.1.0-SNAPSHOT"
+(defproject stock-exchange "0.1.0-SNAPSHOT"
   :description "AgentStockExchange"
   :url "http://github.com/joninvski/stock_exchange_clojure"
   :license {:name "Eclipse Public License"
@@ -7,9 +7,14 @@
                  [cljfmt "0.5.1"]
                  [clojure-future-spec "1.9.0-alpha14"]
                  [org.clojure/test.check "0.9.0"] 
+                 [jonase/eastwood "0.2.3"]
+                 [org.clojure/tools.logging "0.3.1"]
+                 [org.clojure/tools.trace "0.7.9"]
                  ]
+  :repl-options {:nrepl-middleware [cider.nrepl.middleware.pprint/wrap-pprint]}
 
-  :main ^:skip-aot my-stuff.core
+  :main ^:skip-aot stock-exchange.core 
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}}
-  :plugins [[cider/cider-nrepl "0.13.0"]])
+  :plugins [[cider/cider-nrepl "0.14.0"]
+            [jonase/eastwood "0.2.3"]])
