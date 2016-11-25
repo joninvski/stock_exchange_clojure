@@ -4,7 +4,6 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.8.0"]
-                 [cljfmt "0.5.1"]
                  [clojure-future-spec "1.9.0-alpha14"]
                  [org.clojure/test.check "0.9.0"] 
                  [jonase/eastwood "0.2.3"]
@@ -17,4 +16,5 @@
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}}
   :plugins [[cider/cider-nrepl "0.14.0"]
+            [cljfmt "0.5.1"]
             [jonase/eastwood "0.2.3"]])
