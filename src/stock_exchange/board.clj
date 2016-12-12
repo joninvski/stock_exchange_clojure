@@ -2,8 +2,8 @@
   (:require [clojure.spec :as spec]
             [stock-exchange.types :as t]))
 
-(def board-initial-state 
-  {::t/agent-type ::bulletin-board 
+(def board-initial-state
+  {::t/agent-type ::bulletin-board
    ::requests []})
 
 (defn create-bulletin-board
@@ -11,21 +11,21 @@
   [id]
   (agent (assoc board-initial-state ::t/id id)))
 
-(defn create-n-bulletin-boards
-  "Create n bulleting board agents"
-  [n]
+(defn create-board-per-topic
+  "Create a board per topic"
+  [topics]
   (zipmap
-   (range n)
-   (map create-bulletin-board (range n))))
+   topics
+   (map create-bulletin-board topics)))
 
 (defn register-request-in-bb
   "Registers in bulletin-board"
-  [bb-value id]
-  (update-in bb-value [::requests] conj id))
+  [bb-value request]
+  (update-in bb-value [::requests] conj request))
 
 (spec/fdef create-bulletin-board
-        :args (spec/cat :id ::id)
-        :ret #(spec/valid? ::t/agent %))
+           :args (spec/cat :id ::id)
+           :ret #(spec/valid? ::t/agent %))
 
 (spec/fdef create-n-bulletin-boards
-        :args (spec/cat :n integer?))
+           :args (spec/cat :n integer?))

@@ -93,17 +93,21 @@
   (aprint @world))
 ;;; End of debugging
 
+(def topics [:A :B :C])
+
 (defn reset-world!
   []
-  (swap! world (constantly (w/create-world n-suppliers n-requesters n-boards))))
-
-(defn -main []
-  (reset-world!)
-  (add-watchers world))
+  (swap! world (constantly (w/create-world topics 1 0))))
 
 (defn uuid [] (str (java.util.UUID/randomUUID)))
 
 (defn ex
   []
-  (let [request (r/create-requester uuid)]
-    (post 0 [0] world)))
+  (let [requester (r/create-requester (uuid))
+        topic (rand-nth topics)]
+    (post requester [topic] world)))
+
+(defn -main []
+  (reset-world!)
+  (add-watchers world)
+  (ex))

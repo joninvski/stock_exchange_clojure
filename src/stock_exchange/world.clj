@@ -31,7 +31,9 @@
 
 (defn create-world
   "Create the initial world"
-  [n-suppliers n-requesters n-boards]
-  {::suppliers (atom (s/create-n-suppliers n-suppliers))
-   ::requesters (atom (r/create-n-requesters n-requesters))
-   ::bulletin-boards (atom (b/create-n-bulletin-boards n-boards))})
+  ([] (create-world []))
+  ([topics] (create-world [] 0 0))
+  ([topics n-suppliers n-requesters]
+   {::suppliers (atom (s/create-n-suppliers n-suppliers))
+    ::requesters (atom (r/create-n-requesters n-requesters))
+    ::bulletin-boards (atom (b/create-board-per-topic topics))}))
