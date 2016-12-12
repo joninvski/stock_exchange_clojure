@@ -9,13 +9,12 @@
                  [jonase/eastwood "0.2.3"]
                  [com.taoensso/timbre "4.7.4"]
                  [org.clojure/tools.trace "0.7.9"]
+                 [cljfmt "0.5.6"]
                  [aprint "0.1.3"]
-                 ]
+                 [jonase/eastwood "0.2.3"]]
   :repl-options {:nrepl-middleware [cider.nrepl.middleware.pprint/wrap-pprint]}
 
   :main ^:skip-aot stock-exchange.core 
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}}
-  :plugins [[cider/cider-nrepl "0.14.0"]
-            [cljfmt "0.5.6"]
-            [jonase/eastwood "0.2.3"]])
+  :plugins [[cider/cider-nrepl "0.14.0"]])

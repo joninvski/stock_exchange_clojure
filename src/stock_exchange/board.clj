@@ -18,6 +18,11 @@
    (range n)
    (map create-bulletin-board (range n))))
 
+(defn register-request-in-bb
+  "Registers in bulletin-board"
+  [bb-value id]
+  (update-in bb-value [::requests] conj id))
+
 (spec/fdef create-bulletin-board
         :args (spec/cat :id ::id)
         :ret #(spec/valid? ::t/agent %))
