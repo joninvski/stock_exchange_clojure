@@ -9,6 +9,7 @@
                  [jonase/eastwood "0.2.3"]
                  [com.taoensso/timbre "4.7.4"]
                  [org.clojure/tools.trace "0.7.9"]
+                 [aprint "0.1.3"]
                  ]
   :repl-options {:nrepl-middleware [cider.nrepl.middleware.pprint/wrap-pprint]}
 

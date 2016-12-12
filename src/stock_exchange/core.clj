@@ -7,7 +7,8 @@
             [stock-exchange.board :as b]
             [stock-exchange.types :as t]
             )
-  (:use [clojure.tools.trace :only [trace-ns untrace-ns]])
+  (:use [clojure.tools.trace :only [trace-ns untrace-ns]]
+        [aprint.core :only [aprint]])
   (:gen-class)
   )
 
@@ -73,6 +74,8 @@
       (dorun (map #(send % register-in-bb id) matched-bulletin-boards))
       (dorun (map #(send % supplier-evaluate topics id) suppliers)))))
 
+
+
 ;;;;; Debugging
 (defn add-watcher
   "Debug watcher to agent to show values changing "
@@ -101,10 +104,14 @@
   (if b
     (trace-ns 'stock-exchange.core)
     (untrace-ns 'stock-exchange.core)))
+
+(defn inspect
+  [world]
+  (aprint @world))
 ;;; Debugging
 
 (defn -main []
   (swap! world (constantly (create-world n-suppliers n-requesters n-boards)))
-  ;(add-watchers world)
+  (add-watchers world)
   (post 0 [0] @world))
 
