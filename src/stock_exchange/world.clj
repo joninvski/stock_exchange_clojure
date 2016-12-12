@@ -29,6 +29,14 @@
   [topics world]
   (vals (select-keys (indexed-boards world) topics)))
 
+(defn register-in-boards
+  [request matched-boards]
+  (dorun (map #(send % b/register-request-in-bb request) matched-boards)))
+
+(defn offer-to-suppliers
+  [request topics suppliers supplier-evaluate-fn]
+  (dorun (map #(send % supplier-evaluate-fn topics request) suppliers)))
+
 (defn create-world
   "Create the initial world"
   ([] (create-world []))

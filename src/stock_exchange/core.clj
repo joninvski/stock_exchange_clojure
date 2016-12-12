@@ -53,11 +53,11 @@
   (let [bulletin-boards (w/boards world)
         suppliers (w/suppliers world)
         requesters (w/requesters world)
-        matched-bulletin-boards (w/boards-with-topics topics world)]
+        matched-boards (w/boards-with-topics topics world)]
     (do
       (w/add-request request requesters world)
-      (dorun (map #(send % b/register-request-in-bb request) matched-bulletin-boards))
-      (dorun (map #(send % supplier-evaluate topics request) suppliers)))))
+      (w/register-in-boards request matched-boards)
+      (w/offer-to-suppliers request topics suppliers supplier-evaluate))))
 
 ;;;;; Debugging
 (defn add-watcher
