@@ -16,5 +16,5 @@
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}}
   :plugins [[cider/cider-nrepl "0.14.0"]
-            [cljfmt "0.5.1"]
+            [cljfmt "0.5.6"]
             [jonase/eastwood "0.2.3"]])
