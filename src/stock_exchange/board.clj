@@ -1,15 +1,15 @@
 (ns stock-exchange.board
   (:require [clojure.spec :as spec]
-            [stock-exchange.core :as core]))
+            [stock-exchange.types :as t]))
 
 (def board-initial-state 
-  {::core/agent-type ::bulletin-board 
+  {::t/agent-type ::bulletin-board 
    ::requests []})
 
 (defn create-bulletin-board
   "Given an id, creates a bulletin-board agent"
   [id]
-  (agent (assoc board-initial-state ::core/id id)))
+  (agent (assoc board-initial-state ::t/id id)))
 
 (defn create-n-bulletin-boards
   "Create n bulleting board agents"
@@ -20,7 +20,7 @@
 
 (spec/fdef create-bulletin-board
         :args (spec/cat :id ::id)
-        :ret #(spec/valid? ::core/agent %))
+        :ret #(spec/valid? ::t/agent %))
 
 (spec/fdef create-n-bulletin-boards
         :args (spec/cat :n integer?))

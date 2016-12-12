@@ -7,7 +7,7 @@
                  [clojure-future-spec "1.9.0-alpha14"]
                  [org.clojure/test.check "0.9.0"] 
                  [jonase/eastwood "0.2.3"]
-                 [org.clojure/tools.logging "0.3.1"]
+                 [com.taoensso/timbre "4.7.4"]
                  [org.clojure/tools.trace "0.7.9"]
                  ]
   :repl-options {:nrepl-middleware [cider.nrepl.middleware.pprint/wrap-pprint]}

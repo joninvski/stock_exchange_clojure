@@ -1,18 +1,27 @@
 (ns stock-exchange.core
   (:require [clojure.string :as str]
-            [clojure.tools.logging :as log]
-            [clojure.spec :as spec]
+            [taoensso.timbre :as log]
+            [taoensso.timbre.appenders.core :as core-appenders]
             [stock-exchange.supplier :as s]
             [stock-exchange.requester :as r]
             [stock-exchange.board :as b]
+            [stock-exchange.types :as t]
             )
-  (:use [clojure.tools.trace :only [trace-ns untrace-ns]]))
+  (:use [clojure.tools.trace :only [trace-ns untrace-ns]])
+  (:gen-class)
+  )
 
-(spec/def ::agent-type #{:supplier :requester :bulletin-board})
-(spec/def ::id integer?)
-(spec/def ::agent #(= (type %) clojure.lang.Agent))
+; set log level
+(def log-file-name "log.txt")
+(def log-config
+  {:level :debug
+   :appenders {:println (core-appenders/println-appender {:stream :auto})
+               :spit (core-appenders/spit-appender {:fname "./log.log"})}
+   }
+  )
+(log/set-config! log-config)
 
-; number of suppliers at startup 
+; number of suppliers at startup
 (def n-suppliers 2)
 
 ; number of requesters at start up
@@ -31,15 +40,27 @@
    ::requesters (r/create-n-requesters n-requesters)
    ::bulletin-boards (b/create-n-bulletin-boards n-boards)})
 
-(defn post-bb
-  "Post request in bulletin-board"
-  [bb-state id]
-  (update-in bb-state [::requests] conj id))
+(defn register-in-bb
+  "Registers in bulletin-board"
+  [bb-value id]
+  (update-in bb-value [::requests] conj id))
+
+(defn supplier-accepts
+  []
+  (= (rand-int 2) 1)
+  )
 
 (defn supplier-evaluate
   "Function of the supplier to evaluate a request"
   [supplier-state topics request-id]
-  (update-in supplier-state [::offers] conj request-id))
+  (if (supplier-accepts)
+    (do (log/info "This supplier accepts")
+        (update-in supplier-state [::offers] conj request-id))
+    (do (log/info "This supplier does not accept")
+        supplier-state
+        )
+    )
+  )
 
 (defn post
   "Post a request"
@@ -49,9 +70,10 @@
         requesters (::requesters world)
         matched-bulletin-boards (vals (select-keys bulletin-boards topics))]
     (do
-      (dorun (map #(send % post-bb id) matched-bulletin-boards))
+      (dorun (map #(send % register-in-bb id) matched-bulletin-boards))
       (dorun (map #(send % supplier-evaluate topics id) suppliers)))))
 
+;;;;; Debugging
 (defn add-watcher
   "Debug watcher to agent to show values changing "
   [supplier field-to-watch]
@@ -60,12 +82,11 @@
              (fn [k r o n]
                (log/info
                 (format "%s\t%d\tOLD: %s\tNEW: %s"
-                        ((str/split (str (@r ::agent-type)) #"/") 1)
+                        ((str/split (str (@r ::t/agent-type)) #"/") 1)
                         (o ::id)
                         (o field-to-watch)
                         (n field-to-watch))))))
 
-;;;;; Debugging 
 (defn add-watchers
   [world]
   (let [suppliers (@world ::suppliers)
@@ -84,6 +105,6 @@
 
 (defn -main []
   (swap! world (constantly (create-world n-suppliers n-requesters n-boards)))
-  (add-watchers world)
+  ;(add-watchers world)
   (post 0 [0] @world))
 
