@@ -38,6 +38,16 @@ services:
       - .:/usr/src/app
     command: lein eastwood
 
+  server:
+    build:
+      dockerfile: Dockerfile.client
+      context: .
+    ports:
+      - "0.0.0.0:3000:3000"
+    volumes:
+      - .:/usr/src/app
+    command: lein ring server-headless
+
 networks:
   back:
     driver: bridge
