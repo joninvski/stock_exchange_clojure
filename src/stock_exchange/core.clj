@@ -5,6 +5,7 @@
             [stock-exchange.supplier :as s]
             [stock-exchange.requester :as r]
             [stock-exchange.board :as b]
+            [stock-exchange.world :as w]
             [stock-exchange.types :as t])
   (:use [clojure.tools.trace :only [trace-ns untrace-ns]]
         [aprint.core :only [aprint]])
@@ -30,13 +31,6 @@
 ; The entire world
 (def world (atom {}))
 
-(defn create-world
-  "Create the initial world"
-  [n-suppliers n-requesters n-boards]
-  {::suppliers (atom (s/create-n-suppliers n-suppliers))
-   ::requesters (atom (r/create-n-requesters n-requesters))
-   ::bulletin-boards (atom (b/create-n-bulletin-boards n-boards))})
-
 (defn supplier-accepts
   []
   (= (rand-int 2) 1))
@@ -53,20 +47,15 @@
         (log/info "Supplier" supplier-id "does not accept")
         supplier-state))))
 
-(defn add-request
-  [request requesters]
-  (swap! requesters conj request))
-
 (defn post
   "Post a request"
   [request topics world]
-  (let [world @world
-        bulletin-boards (world ::bulletin-boards)
-        suppliers @(world ::suppliers)
-        requesters (world ::requesters)
-        matched-bulletin-boards (vals (select-keys @bulletin-boards topics))]
+  (let [bulletin-boards (w/boards world)
+        suppliers (w/suppliers world)
+        requesters (w/requesters world)
+        matched-bulletin-boards (w/boards-with-topics topics world)]
     (do
-      (add-request request requesters)
+      (w/add-request request requesters world)
       (dorun (map #(send % b/register-request-in-bb request) matched-bulletin-boards))
       (dorun (map #(send % supplier-evaluate topics request) suppliers)))))
 
@@ -77,7 +66,7 @@
   (add-watch supplier
              :key
              (fn [k r o n]
-               (log/info
+               (log/debug
                 (format "%s\t%d\tOLD: %s\tNEW: %s"
                         ((str/split (str (@r ::t/agent-type)) #"/") 1)
                         (o ::id)
@@ -86,12 +75,12 @@
 
 (defn add-watchers
   [world]
-  (let [suppliers (@world ::suppliers)
-        bulletin-boards (vals (@world ::bulletin-boards))
-        requesters (@world ::requesters)]
-    (dorun (map #(add-watcher % ::offers) suppliers))
-    (dorun (map #(add-watcher % ::requests) bulletin-boards))
-    (dorun (map #(add-watcher % ::suppliers-matched) requesters))))
+  (let [suppliers (w/suppliers world)
+        bulletin-boards (w/boards world)
+        requesters (w/requesters world)]
+    (dorun (map #(add-watcher % ::w/offers) suppliers))
+    (dorun (map #(add-watcher % ::w/requests) bulletin-boards))
+    (dorun (map #(add-watcher % ::w/suppliers-matched) requesters))))
 
 (defn activate-trace-debug
   [b]
@@ -106,7 +95,7 @@
 
 (defn reset-world!
   []
-  (swap! world (constantly (create-world n-suppliers n-requesters n-boards))))
+  (swap! world (constantly (w/create-world n-suppliers n-requesters n-boards))))
 
 (defn -main []
   (reset-world!)
